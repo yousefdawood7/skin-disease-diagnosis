@@ -273,12 +273,13 @@ export const NewScanScreen: React.FC = () => {
       const diagnosisResult = await diagnosesApi.explainScan(capturedUri, 0.45);
 
       // No-lesion results (healthy skin or a non-skin image) skip the explain
-      // page: alert the user and stay on the capture screen instead.
+      // page: resolve the 'loading' spinner into its result status — green
+      // 'good' for healthy, red 'sick' for not_skin — then alert and stay on
+      // the capture screen. sendStatus publishes at once and keeps the 5.5s
+      // keep-alive so the eyes hold the color instead of dropping to idle.
       const predictedClass = (diagnosisResult.predicted_class || '').toLowerCase();
       if (predictedClass === 'healthy' || predictedClass === 'not_skin') {
-        // Stop the loading keep-alive so the device returns to idle rather
-        // than staying stuck on the spinner.
-        stopKeepAlive();
+        sendStatus(predictedClass === 'healthy' ? 'good' : 'sick');
         Alert.alert(
           'No Skin Lesion Detected',
           predictedClass === 'healthy'
