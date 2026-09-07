@@ -65,6 +65,8 @@ export const DashboardScreen: React.FC = () => {
             { class: 'bcc', label_ar: 'سرطان الخلايا القاعدية', is_malignant: true, count: 0 },
             { class: 'akiec', label_ar: 'التقان السعفي', is_malignant: true, count: 0 },
             { class: 'mel', label_ar: 'ورم قتامي (ميلانوما)', is_malignant: true, count: 0 },
+            { class: 'healthy', label_ar: 'جلد سليم (خالٍ من الإصابات)', is_malignant: false, count: 0 },
+            { class: 'not_skin', label_ar: 'صورة غير صالحة (ليست جلداً)', is_malignant: false, count: 0 },
           ],
           high_risk_scans: 0,
           growth_rate: 0,

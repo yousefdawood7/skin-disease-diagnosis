@@ -271,6 +271,23 @@ export const NewScanScreen: React.FC = () => {
     try {
       // Send image to Dr. Hakeem AI diagnosis & heatmap explainability engine
       const diagnosisResult = await diagnosesApi.explainScan(capturedUri, 0.45);
+
+      // No-lesion results (healthy skin or a non-skin image) skip the explain
+      // page: alert the user and stay on the capture screen instead.
+      const predictedClass = (diagnosisResult.predicted_class || '').toLowerCase();
+      if (predictedClass === 'healthy' || predictedClass === 'not_skin') {
+        // Stop the loading keep-alive so the device returns to idle rather
+        // than staying stuck on the spinner.
+        stopKeepAlive();
+        Alert.alert(
+          'No Skin Lesion Detected',
+          predictedClass === 'healthy'
+            ? 'Your skin appears healthy — no lesion detected. No explainability report is needed.'
+            : 'This image was not recognized as skin. Please retake with clear focus on the lesion area.'
+        );
+        return;
+      }
+
       navigation.navigate('DiagnosticReport', {
         scanId: (diagnosisResult.id || 1).toString(),
         title: `${diagnosisResult.label_ar || 'تشخيص'} (${diagnosisResult.predicted_label || 'Finding'})`,
